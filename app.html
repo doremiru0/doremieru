@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ドレミえる</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=M+PLUS+1p:wght@800&display=swap" rel="stylesheet">
+  <style>
+    .font-kaisei { font-family: 'Kaisei Decol', serif; }
+    .font-mplus { font-family: 'M PLUS 1p', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 relative min-h-screen flex flex-col" id="drop-zone">
+
+  <div id="drag-overlay" class="hidden fixed inset-0 z-50 bg-blue-500/20 border-8 border-blue-500 border-dashed rounded-3xl flex items-center justify-center pointer-events-none m-4">
+    <div class="bg-white px-10 py-6 rounded-2xl shadow-2xl flex flex-col items-center">
+      <span class="text-6xl mb-4">📥</span>
+      <p class="text-2xl font-bold text-blue-600">ここに画像をドロップして読み込み</p>
+    </div>
+  </div>
+
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-[1800px] mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <a href="index.html" class="font-kaisei text-4xl font-black tracking-tighter cursor-pointer hover:opacity-80 transition-opacity" title="トップページへ戻る">
+        <span style="color: #86cecb">ド</span><span style="color: #ebd3cf">レ</span><span style="color: #ffd98c">ミ</span><span style="color: #000000">え</span><span style="color: #000000">る</span>
+      </a>
+      
+      <div class="flex flex-wrap gap-4 items-center">
+        <a href="guide.html" class="text-slate-500 hover:text-blue-600 font-bold transition-colors">使い方ガイド</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow p-2 md:p-4 max-w-[1800px] mx-auto mt-4 space-y-4">
+    
+    <div class="px-6 py-3 rounded-2xl bg-slate-900 flex items-center justify-center gap-3">
+      <span class="relative flex h-2.5 w-2.5 shrink-0">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#86cecb] opacity-40"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#86cecb]"></span>
+      </span>
+      <span id="status-text" class="font-mono text-sm md:text-base font-semibold text-[#86cecb] tracking-wider">
+        画像をアップロードしてください
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div class="lg:col-span-1 space-y-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm space-y-6 border border-slate-200">
+          
+          <div class="space-y-3">
+            <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">楽譜を読み込む</label>
+            <input type="file" id="file-upload" accept=".jpg,.jpeg,.png,.webp" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-colors cursor-pointer" />
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">操作モード</label>
+            <div class="grid grid-cols-2 gap-2" id="mode-buttons">
+              <button data-mode="auto" class="py-3 text-xs font-bold rounded-xl transition-all bg-yellow-400 text-slate-900 shadow-md">🖍️ マーカーを引く</button>
+              <button data-mode="erase_marker" class="py-3 text-xs font-bold rounded-xl transition-all bg-slate-100 text-slate-500 hover:bg-slate-200">🧽 マーカーを消す</button>
+              <button data-mode="manual_add" class="py-3 text-xs font-bold rounded-xl transition-all bg-slate-100 text-slate-500 hover:bg-slate-200">➕ 印をつける</button>
+              <button data-mode="manual_delete" class="py-3 text-xs font-bold rounded-xl transition-all bg-slate-100 text-slate-500 hover:bg-slate-200">🗑️ 印を消す</button>
+            </div>
+            
+            <div id="analyze-btn-container" class="pt-2">
+              <button id="btn-analyze" class="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-base shadow-md shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">
+                音符を解析
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">音部記号</label>
+            <div class="flex bg-slate-100 p-1 rounded-xl" id="clef-buttons">
+              <button data-clef="treble" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-blue-600 shadow-sm">ト音記号</button>
+              <button data-clef="bass" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700">ヘ音記号</button>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">五線を合わせる</label>
+            
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold text-slate-500">
+                <span>位置 (Y)</span><span id="val-staffTop" class="text-slate-700">200</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button data-target="staffTop" data-dir="sub" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">−</button>
+                <input type="range" id="slider-staffTop" min="0" max="3000" step="1" value="200" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <button data-target="staffTop" data-dir="add" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">＋</button>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold text-slate-500">
+                <span>間隔 (S)</span><span id="val-spacing" class="text-slate-700">15</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button data-target="spacing" data-dir="sub" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">−</button>
+                <input type="range" id="slider-spacing" min="5" max="150" step="1" value="15" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <button data-target="spacing" data-dir="add" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">＋</button>
+              </div>
+            </div>
+            
+            <div class="pt-3 pb-1 border-t border-slate-100 space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">表示サイズの調整</label>
+                <button id="btn-fit" class="text-[10px] px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded font-bold transition-colors active:scale-95">画面幅に合わせる</button>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-slate-500">
+                  <span>ズーム倍率</span><span id="val-scale" class="text-slate-700">100%</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button data-target="scale" data-dir="sub" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">−</button>
+                  <input type="range" id="slider-scale" min="0.1" max="3.0" step="0.05" value="1" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                  <button data-target="scale" data-dir="add" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">＋</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold text-slate-500">
+                <span>背景の暗さ</span><span id="val-imageDim" class="text-slate-700">50%</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button data-target="imageDim" data-dir="sub" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">−</button>
+                <input type="range" id="slider-imageDim" min="0" max="90" step="5" value="50" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-500">
+                <button data-target="imageDim" data-dir="add" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">＋</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4 border-t border-slate-100 pt-4" id="threshold-container">
+            <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">感度調整</label>
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-bold text-slate-500">
+                <span>黒さしきい値</span><span id="val-threshold" class="text-slate-700">39</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button data-target="threshold" data-dir="sub" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">−</button>
+                <input type="range" id="slider-threshold" min="0" max="220" step="1" value="39" class="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-800">
+                <button data-target="threshold" data-dir="add" class="w-8 h-8 flex shrink-0 items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold shadow-sm active:scale-95 transition-transform">＋</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-slate-100">
+            <button id="btn-full-reset" class="w-full py-3 rounded-xl font-bold text-sm tracking-widest text-red-500 bg-red-50 hover:bg-red-100 active:scale-95 transition-all border border-red-200">
+              全てのデータをリセット
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="lg:col-span-4">
+        <div id="canvas-wrapper" class="hidden">
+          <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-white">
+            <div id="container-ref" class="overflow-auto max-h-[85vh] bg-slate-200">
+              <canvas id="main-canvas" class="mx-auto cursor-crosshair"></canvas>
+            </div>
+          </div>
+          <p id="helper-text" class="mt-3 text-center text-xs text-slate-400 font-medium">五線の周辺（上下の点線内）をなぞってマーカーを引きます</p>
+        </div>
+        
+        <div id="placeholder" class="h-full min-h-[60vh] flex flex-col items-center justify-center border-4 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
+          <div class="text-slate-300 text-6xl mb-4">🎵</div>
+          <p class="text-slate-400 font-bold text-center">
+            左上のパネルから楽譜画像を選択するか<br/>
+            <span class="text-slate-500">ここに画像をドラッグ＆ドロップ</span>してください
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="w-full py-6 text-center text-slate-500 text-sm bg-white border-t border-slate-200 mt-auto">
+    <ul class="flex flex-wrap justify-center gap-6 md:gap-12 px-4">
+      <li><a href="index.html" class="hover:text-slate-800 transition-colors">Top</a></li>
+      <li><a href="operator.html" class="hover:text-slate-800 transition-colors">運営者情報</a></li>
+      <li><a href="privacy.html" class="hover:text-slate-800 transition-colors">プライバシーポリシー</a></li>
+      <li><a href="terms.html" class="hover:text-slate-800 transition-colors">利用規約</a></li>
+      <li><a href="contact.html" class="hover:text-slate-800 transition-colors">お問い合わせ</a></li>
+      <li><a href="history.html" class="hover:text-slate-800 transition-colors">更新履歴</a></li>
+    </ul>
+    <p class="mt-4 text-xs text-slate-400">&copy; 2026 Triple Play. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

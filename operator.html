@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ドレミえるの運営者情報ページです。サービスの運営主体や開発の背景、目的、ユーザーへのメッセージなどを掲載しています。">
+  <title>運営者情報 - ドレミえる</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=M+PLUS+1p:wght@800&display=swap" rel="stylesheet">
+  
+  <style>
+    .font-kaisei { font-family: 'Kaisei Decol', serif; }
+    .font-mplus { font-family: 'M PLUS 1p', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 relative min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-[1800px] mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <a href="index.html" class="font-kaisei text-4xl font-black tracking-tighter cursor-pointer hover:opacity-80 transition-opacity" title="トップページへ戻る">
+        <span style="color: #86cecb">ド</span><span style="color: #ebd3cf">レ</span><span style="color: #ffd98c">ミ</span><span style="color: #000000">え</span><span style="color: #000000">る</span>
+      </a>
+      <div class="flex flex-wrap gap-4 items-center">
+        <a href="guide.html" class="text-slate-500 hover:text-blue-600 font-bold transition-colors">使い方ガイド</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow p-4 md:p-8 w-full mx-auto max-w-[1000px]">
+    <div class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200">
+      <h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">運営者情報</h1>
+      
+      <div class="space-y-10 text-slate-700 leading-relaxed">
+        <section>
+          <p>「ドレミえる」をご利用いただき、誠にありがとうございます。</p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-slate-800 border-l-4 border-[#86cecb] pl-3">運営・開発チーム</h2>
+          <div class="pl-4 space-y-2">
+            <p class="font-bold text-lg text-slate-800">Triple Play</p>
+            <ul class="list-inside list-disc pl-2 space-y-1 text-slate-600 marker:text-[#86cecb]">
+              <li>M.A.</li>
+              <li>A.I.</li>
+              <li>Y.H.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-slate-800 border-l-4 border-[#86cecb] pl-3">開発の背景と目的</h2>
+          <div class="pl-4 space-y-4">
+            <p>
+              「ドレミえる」は、譜読みに困っている方をサポートし、音楽をもっと身近に楽しめるようにすることを目的として開発されました。ハッカソンでの開発をきっかけに誕生し、マーカーで塗った部分の音階を自動で解析・表示する仕組みを通じて、楽譜の理解や楽器の練習をスムーズにするお手伝いをします。
+            </p>
+            <p>
+              「ドレミえる」という名前には、トップページのキャッチコピーでもある「『ドレミ』が『みえる』」という機能のコアな体験と、誰もが手軽に使えるツールでありたいという思いを込めています。
+            </p>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-slate-800 border-l-4 border-[#86cecb] pl-3">メッセージ</h2>
+          <div class="pl-4 space-y-4">
+            <p>
+              このツールが、皆さんの音楽ライフの一助となれば幸いです。
+            </p>
+            <p>
+              「こんな風に使っています」「こんな機能があったらいいな」といったご意見・ご感想も大歓迎です！
+            </p>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="text-xl font-bold text-slate-800 border-l-4 border-[#86cecb] pl-3">連絡先</h2>
+          <div class="pl-4 space-y-4">
+            <p>
+              ご意見・ご感想、不具合のご報告などは、以下のフォームよりお気軽にお寄せください。
+            </p>
+            <p>
+              <a href="contact.html" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-bold transition-colors group">
+                お問い合わせフォームはこちら
+                <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full py-6 text-center text-slate-500 text-sm bg-white border-t border-slate-200 mt-auto">
+    <ul class="flex flex-wrap justify-center gap-6 md:gap-12 px-4">
+      <li><a href="index.html" class="hover:text-slate-800 transition-colors">Top</a></li>
+      <li><a href="operator.html" class="hover:text-slate-800 transition-colors">運営者情報</a></li>
+      <li><a href="privacy.html" class="hover:text-slate-800 transition-colors">プライバシーポリシー</a></li>
+      <li><a href="terms.html" class="hover:text-slate-800 transition-colors">利用規約</a></li>
+      <li><a href="contact.html" class="hover:text-slate-800 transition-colors">お問い合わせ</a></li>
+      <li><a href="history.html" class="hover:text-slate-800 transition-colors">更新履歴</a></li>
+    </ul>
+    <p class="mt-4 text-xs text-slate-400">&copy; 2026 Triple Play. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

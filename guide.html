@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="自動譜読みツール「ドレミえる」の詳しい使い方ガイドです。画像の読み込みから音符の自動解析、ドレミの修正方法までをステップで解説します。">
+  <title>使い方ガイド - ドレミえる</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=M+PLUS+1p:wght@800&display=swap" rel="stylesheet">
+  
+  <style>
+    .font-kaisei { font-family: 'Kaisei Decol', serif; }
+    .font-mplus { font-family: 'M PLUS 1p', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 relative min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-[1800px] mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <a href="index.html" class="font-kaisei text-4xl font-black tracking-tighter cursor-pointer hover:opacity-80 transition-opacity" title="トップページへ戻る">
+        <span style="color: #86cecb">ド</span><span style="color: #ebd3cf">レ</span><span style="color: #ffd98c">ミ</span><span style="color: #000000">え</span><span style="color: #000000">る</span>
+      </a>
+      <div class="flex flex-wrap gap-4 items-center">
+        <a href="app.html" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all active:scale-95">始める</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow p-4 md:p-8 w-full mx-auto max-w-[1000px]">
+    <div class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200">
+      <h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">使い方ガイド</h1>
+      
+      <div class="space-y-12 text-slate-700 leading-relaxed">
+        
+        <p class="text-lg">「ドレミえる」は、お手持ちの楽譜画像を読み込んで、指定した範囲の音階（ドレミ）を自動で解析・表示できるツールです。基本的な使い方は以下のステップになります。</p>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
+            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 1</span>
+            <h2 class="text-xl font-bold text-slate-800">楽譜を読み込む</h2>
+          </div>
+          <div class="pl-4 space-y-3">
+            <p>画面左側の「楽譜を読み込む」ボタンから画像ファイル（JPG, PNG, WebP形式）を選択するか、画面右側の点線エリアに直接画像をドラッグ＆ドロップしてください。</p>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
+            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 2</span>
+            <h2 class="text-xl font-bold text-slate-800">五線の位置と間隔を合わせる</h2>
+          </div>
+          <div class="pl-4 space-y-3">
+            <p>画像が読み込まれると、青い「5本線」と赤い「上下の限界線（点線）」が表示されます。</p>
+            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
+              <li><strong>位置 (Y):</strong> スライダーを動かして、青い線の「一番上」を、楽譜の五線の一番上の線に合わせてください</li>
+              <li><strong>間隔 (S):</strong> スライダーを動かして、青い線の幅が楽譜の五線の幅とぴったり重なるように調整してください</li>
+            </ul>
+            <p class="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">※この「五線合わせ」が正確でないと、ドレミの判定がズレてしまうため慎重に合わせましょう</p>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
+            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 3</span>
+            <h2 class="text-xl font-bold text-slate-800">マーカーを引いて音符を解析する</h2>
+          </div>
+          <div class="pl-4 space-y-3">
+            <p>操作モードで「🖍️ マーカーを引く」が選択されていることを確認し、解析したい音符がある場所（五線の周辺）をマウスでドラッグしてなぞります（黄色いマーカーが引かれます）。</p>
+            <p>マーカーを引き終えたら、左下の<strong>「音符を解析」</strong>ボタンをクリックします。黒い音符や白抜きの音符が自動で検出され、ドレミが表示されます。</p>
+            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
+              <li>もしマーカーを間違えた場合は「🧽 マーカーを消す」モードで消すことができます</li>
+              <li>上手く認識されない場合は、<strong>「黒さしきい値」</strong>の感度スライダーを微調整して再度解析をお試しください</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
+            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 4</span>
+            <h2 class="text-xl font-bold text-slate-800">手動で修正する</h2>
+          </div>
+          <div class="pl-4 space-y-3">
+            <p>自動解析で漏れてしまった音符や、間違って認識された音符は手動で修正できます。</p>
+            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
+              <li><strong>➕ 印をつける:</strong> 印をつけたいところでクリックするとその場所に印を追加します</li>
+              <li><strong>🗑️ 印を消す:</strong> 不要な印をクリックすると削除できます</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="mt-8 bg-slate-100 p-6 rounded-2xl border border-slate-200">
+          <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+            <span>💡</span> 最初からやり直したいときは
+          </h3>
+          <p class="text-sm text-slate-600 leading-relaxed pl-7">
+            左側パネルの一番下にある<strong class="text-red-500">「全てのデータをリセット」</strong>ボタンを押すと、読み込んだ画像や設定した五線、書き込んだマーカー・音符などのデータがすべて消去され、初期状態に戻ります。別の楽譜を新しく読み込みたいときなどにご活用ください。
+          </p>
+        </section>
+
+      </div>
+      
+      <div class="mt-16 text-center border-t border-slate-100 pt-8">
+        <a href="app.html" class="inline-block px-10 py-4 text-xl font-bold text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 active:scale-95 tracking-widest">
+          ドレミえるを使ってみる
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="w-full py-6 text-center text-slate-500 text-sm bg-white border-t border-slate-200 mt-auto">
+    <ul class="flex flex-wrap justify-center gap-6 md:gap-12 px-4">
+      <li><a href="index.html" class="hover:text-slate-800 transition-colors">Top</a></li>
+      <li><a href="operator.html" class="hover:text-slate-800 transition-colors">運営者情報</a></li>
+      <li><a href="privacy.html" class="hover:text-slate-800 transition-colors">プライバシーポリシー</a></li>
+      <li><a href="terms.html" class="hover:text-slate-800 transition-colors">利用規約</a></li>
+      <li><a href="contact.html" class="hover:text-slate-800 transition-colors">お問い合わせ</a></li>
+      <li><a href="history.html" class="hover:text-slate-800 transition-colors">更新履歴</a></li>
+    </ul>
+    <p class="mt-4 text-xs text-slate-400">&copy; 2026 Triple Play. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
