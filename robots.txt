@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://doremiru0.github.io/doremieru/sitemap.xml
