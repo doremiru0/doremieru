@@ -5,29 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ドレミえる</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-M20FWSM4Y9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-M20FWSM4Y9');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M20FWSM4Y9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M20FWSM4Y9');
+  </script>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=M+PLUS+1p:wght@800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
   <style>
     .font-kaisei { font-family: 'Kaisei Decol', serif; }
     .font-mplus { font-family: 'M PLUS 1p', sans-serif; }
+    
+    /* スクロールバーのカスタマイズ (PDFモーダル用) */
+    .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-900 relative min-h-screen flex flex-col" id="drop-zone">
 
-  <div id="drag-overlay" class="hidden fixed inset-0 z-50 bg-blue-500/20 border-8 border-blue-500 border-dashed rounded-3xl flex items-center justify-center pointer-events-none m-4">
+  <div id="drag-overlay" class="hidden fixed inset-0 z-[60] bg-blue-500/20 border-8 border-blue-500 border-dashed rounded-3xl flex items-center justify-center pointer-events-none m-4">
     <div class="bg-white px-10 py-6 rounded-2xl shadow-2xl flex flex-col items-center">
       <span class="text-6xl mb-4">📥</span>
-      <p class="text-2xl font-bold text-blue-600">ここに画像をドロップして読み込み</p>
+      <p class="text-2xl font-bold text-blue-600">ここに画像やPDFをドロップして読み込み</p>
+    </div>
+  </div>
+
+  <div id="pdf-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-full flex flex-col overflow-hidden animate-fade-in">
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📄</span>
+          <h3 class="text-xl font-bold text-slate-800 tracking-wide">PDFのページを選択</h3>
+        </div>
+        <button id="btn-close-pdf" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold text-xl transition-colors">&times;</button>
+      </div>
+      
+      <div id="pdf-page-container" class="p-6 overflow-y-auto custom-scrollbar grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-slate-200 flex-grow relative min-h-[50vh]">
+        </div>
+      
+      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 text-center flex justify-center items-center h-16">
+        <div id="pdf-loading-indicator" class="hidden flex items-center gap-3">
+          <div class="animate-spin h-5 w-5 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+          <p id="pdf-loading-text" class="text-sm font-bold text-blue-600 tracking-wider">ページを読み込み中...</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -45,13 +76,13 @@
 
   <main class="flex-grow p-2 md:p-4 max-w-[1800px] mx-auto mt-4 space-y-4">
     
-    <div class="px-6 py-3 rounded-2xl bg-slate-900 flex items-center justify-center gap-3">
+    <div class="px-6 py-3 rounded-2xl bg-slate-900 flex items-center justify-center gap-3 shadow-md">
       <span class="relative flex h-2.5 w-2.5 shrink-0">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#86cecb] opacity-40"></span>
         <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#86cecb]"></span>
       </span>
       <span id="status-text" class="font-mono text-sm md:text-base font-semibold text-[#86cecb] tracking-wider">
-        画像をアップロードしてください
+        画像またはPDFをアップロードしてください
       </span>
     </div>
 
@@ -61,7 +92,17 @@
           
           <div class="space-y-3">
             <label class="text-[13px] font-bold text-slate-900 uppercase tracking-widest">楽譜を読み込む</label>
-            <input type="file" id="file-upload" accept=".jpg,.jpeg,.png,.webp" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-colors cursor-pointer" />
+            <input type="file" id="file-upload" accept=".jpg,.jpeg,.png,.webp,.pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-colors cursor-pointer" />
+            
+            <div class="mt-2 p-3 bg-blue-50/80 border border-blue-100 rounded-xl flex gap-2.5 items-start shadow-sm">
+              <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div class="text-[11px] md:text-xs text-slate-600 leading-relaxed font-medium">
+                <strong class="text-blue-700 block mb-0.5 font-bold">PDFをご利用の方へ</strong>
+                PDFの種類によっては、タイトルなどの文字が一部表示されない場合がございます。
+              </div>
+            </div>
           </div>
 
           <div class="space-y-3">
@@ -167,19 +208,19 @@
 
       <div class="lg:col-span-4">
         <div id="canvas-wrapper" class="hidden">
-          <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-white">
-            <div id="container-ref" class="overflow-auto max-h-[85vh] bg-slate-200">
-              <canvas id="main-canvas" class="mx-auto cursor-crosshair"></canvas>
+          <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-white relative">
+            <div id="container-ref" class="overflow-auto max-h-[85vh] bg-slate-200 custom-scrollbar">
+              <canvas id="main-canvas" class="mx-auto cursor-crosshair shadow-sm"></canvas>
             </div>
           </div>
-          <p id="helper-text" class="mt-3 text-center text-xs text-slate-400 font-medium">五線の周辺（上下の点線内）をなぞってマーカーを引きます</p>
+          <p id="helper-text" class="mt-3 text-center text-xs text-slate-400 font-bold tracking-wide">五線の周辺（上下の点線内）をなぞってマーカーを引きます</p>
         </div>
         
-        <div id="placeholder" class="h-full min-h-[60vh] flex flex-col items-center justify-center border-4 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
-          <div class="text-slate-300 text-6xl mb-4">🎵</div>
-          <p class="text-slate-400 font-bold text-center">
-            左上のパネルから楽譜画像を選択するか<br/>
-            <span class="text-slate-500">ここに画像をドラッグ＆ドロップ</span>してください
+        <div id="placeholder" class="h-full min-h-[60vh] flex flex-col items-center justify-center border-4 border-dashed border-slate-300 rounded-3xl bg-white shadow-sm transition-colors hover:bg-slate-50">
+          <div class="text-slate-300 text-6xl mb-6 transform hover:scale-110 transition-transform">🎵</div>
+          <p class="text-slate-500 font-bold text-center leading-relaxed">
+            左上のパネルから<span class="text-blue-600">画像・PDF</span>を選択するか<br/>
+            このエリアに<span class="text-blue-600">ドラッグ＆ドロップ</span>してください
           </p>
         </div>
       </div>
@@ -189,14 +230,14 @@
 
   <footer class="w-full py-6 text-center text-slate-500 text-sm bg-white border-t border-slate-200 mt-auto">
     <ul class="flex flex-wrap justify-center gap-6 md:gap-12 px-4">
-      <li><a href="index.html" class="hover:text-slate-800 transition-colors">Top</a></li>
-      <li><a href="operator.html" class="hover:text-slate-800 transition-colors">運営者情報</a></li>
-      <li><a href="privacy.html" class="hover:text-slate-800 transition-colors">プライバシーポリシー</a></li>
-      <li><a href="terms.html" class="hover:text-slate-800 transition-colors">利用規約</a></li>
-      <li><a href="contact.html" class="hover:text-slate-800 transition-colors">お問い合わせ</a></li>
-      <li><a href="history.html" class="hover:text-slate-800 transition-colors">更新履歴</a></li>
+      <li><a href="index.html" class="hover:text-slate-800 font-bold transition-colors">Top</a></li>
+      <li><a href="operator.html" class="hover:text-slate-800 font-bold transition-colors">運営者情報</a></li>
+      <li><a href="privacy.html" class="hover:text-slate-800 font-bold transition-colors">プライバシーポリシー</a></li>
+      <li><a href="terms.html" class="hover:text-slate-800 font-bold transition-colors">利用規約</a></li>
+      <li><a href="contact.html" class="hover:text-slate-800 font-bold transition-colors">お問い合わせ</a></li>
+      <li><a href="history.html" class="hover:text-slate-800 font-bold transition-colors">更新履歴</a></li>
     </ul>
-    <p class="mt-4 text-xs text-slate-400">&copy; 2026 Triple Play. All rights reserved.</p>
+    <p class="mt-4 text-xs font-bold text-slate-400">&copy; 2026 Triple Play. All rights reserved.</p>
   </footer>
 
   <script src="app.js"></script>
