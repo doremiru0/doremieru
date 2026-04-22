@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // --- PDF.js Worker 設定 ---
+  if (window.pdfjsLib) {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
   // --- 状態管理 ---
   const state = {
     imageSrc: null,
@@ -29,10 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const thresholdContainer = document.getElementById('threshold-container');
   const dragOverlay = document.getElementById('drag-overlay');
 
+  // PDF用DOM
+  const pdfModal = document.getElementById('pdf-modal');
+  const pdfPageContainer = document.getElementById('pdf-page-container');
+  const btnClosePdf = document.getElementById('btn-close-pdf');
+  const pdfLoadingIndicator = document.getElementById('pdf-loading-indicator');
+  const pdfLoadingText = document.getElementById('pdf-loading-text');
+
   let currentImage = new Image();
 
   function makeId() { return Math.random().toString(36).slice(2, 11); }
   function setStatus(text) { if (statusText) statusText.textContent = text; }
+
+  // PDFモーダルを閉じる処理
+  if (btnClosePdf) {
+    btnClosePdf.addEventListener('click', () => {
+      pdfModal.classList.add('hidden');
+      if (fileUpload) fileUpload.value = ''; // ファイル選択をリセット
+    });
+  }
 
   // --- 座標・判定ロジック ---
   function getMousePos(e) {
@@ -145,34 +165,131 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- ファイルアップロード＆D&D処理 ---
+  // --- PDF・画像アップロード・解析統合処理 ---
+
+  // 画像DataURLを受け取り、アプリのフローに載せる共通関数
+  function loadImageDataUrl(dataUrl) {
+    state.imageSrc = dataUrl;
+    const img = new Image();
+    img.onload = () => {
+      currentImage = img;
+      if (canvas) {
+        canvas.width = currentImage.width;
+        canvas.height = currentImage.height;
+      }
+      
+      if (placeholder) placeholder.classList.add('hidden');
+      if (canvasWrapper) canvasWrapper.classList.remove('hidden');
+
+      state.notes = []; 
+      state.strokes = [];
+      state.currentPath = [];
+      setStatus('五線を合わせてから、操作を選んでください');
+
+      requestAnimationFrame(() => {
+        fitToContainer();
+        render();
+      });
+    };
+    img.src = state.imageSrc;
+  }
+
+  // PDFファイルの解析とサムネイル一覧表示
+  async function handlePdfFile(file) {
+    if (!window.pdfjsLib) {
+      alert('PDF処理ライブラリの読み込みに失敗しました。');
+      return;
+    }
+
+    pdfModal.classList.remove('hidden');
+    pdfPageContainer.innerHTML = '';
+    pdfLoadingIndicator.classList.remove('hidden');
+    pdfLoadingText.textContent = 'PDFを解析中...';
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        
+        // サムネイル用は低解像度で軽量にレンダリング (scale: 0.5)
+        const viewport = page.getViewport({ scale: 0.5 });
+        const thumbCanvas = document.createElement('canvas');
+        const thumbCtx = thumbCanvas.getContext('2d');
+        thumbCanvas.width = viewport.width;
+        thumbCanvas.height = viewport.height;
+        
+        await page.render({ canvasContext: thumbCtx, viewport: viewport }).promise;
+        
+        // サムネイルのUI要素作成
+        const thumbWrapper = document.createElement('div');
+        thumbWrapper.className = 'cursor-pointer ring-2 ring-transparent hover:ring-blue-500 rounded-xl overflow-hidden bg-white shadow-md transition-all transform hover:-translate-y-1 hover:shadow-xl flex flex-col group';
+        
+        const imgEl = document.createElement('img');
+        imgEl.src = thumbCanvas.toDataURL();
+        imgEl.className = 'w-full h-auto object-contain bg-white border-b border-slate-100 group-hover:opacity-90 transition-opacity';
+        
+        const label = document.createElement('div');
+        label.className = 'py-3 text-center text-sm font-black text-slate-600 bg-slate-50 group-hover:text-blue-600 group-hover:bg-blue-50 transition-colors';
+        label.textContent = `${pageNum} ページ`;
+
+        thumbWrapper.appendChild(imgEl);
+        thumbWrapper.appendChild(label);
+        
+        // ページが選択された時の処理
+        thumbWrapper.addEventListener('click', async () => {
+          pdfLoadingIndicator.classList.remove('hidden');
+          pdfLoadingText.textContent = '高画質で読み込み中...';
+          
+          try {
+            // 本番用のキャンバスには高画質でレンダリング (scale: 3.0 で拡大)
+            const highResViewport = page.getViewport({ scale: 3.0 });
+            const highResCanvas = document.createElement('canvas');
+            const highResCtx = highResCanvas.getContext('2d');
+            highResCanvas.width = highResViewport.width;
+            highResCanvas.height = highResViewport.height;
+            
+            await page.render({ canvasContext: highResCtx, viewport: highResViewport }).promise;
+            
+            // jpeg変換してメイン画像として読み込む
+            const dataUrl = highResCanvas.toDataURL('image/jpeg', 0.95);
+            pdfModal.classList.add('hidden');
+            loadImageDataUrl(dataUrl);
+            
+          } catch (err) {
+            console.error(err);
+            alert('ページの読み込みに失敗しました。');
+          } finally {
+            pdfLoadingIndicator.classList.add('hidden');
+          }
+        });
+
+        pdfPageContainer.appendChild(thumbWrapper);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('PDFの展開に失敗しました。');
+      pdfModal.classList.add('hidden');
+    } finally {
+      pdfLoadingIndicator.classList.add('hidden');
+    }
+  }
+
+  // ファイル入力時のハンドラー
   function processFile(file) {
     if (!file) return;
+
+    // PDFの場合は専用フローへ分岐
+    if (file.type === 'application/pdf') {
+      handlePdfFile(file);
+      return;
+    }
+
+    // 既存の画像ファイルの読み込みフロー
     const reader = new FileReader();
     reader.onload = (ev) => {
-      state.imageSrc = ev.target.result;
-      const img = new Image();
-      img.onload = () => {
-        currentImage = img;
-        if (canvas) {
-          canvas.width = currentImage.width;
-          canvas.height = currentImage.height;
-        }
-        
-        if (placeholder) placeholder.classList.add('hidden');
-        if (canvasWrapper) canvasWrapper.classList.remove('hidden');
-
-        state.notes = []; 
-        state.strokes = [];
-        state.currentPath = [];
-        setStatus('五線を合わせてから、操作を選んでください');
-
-        requestAnimationFrame(() => {
-          fitToContainer();
-          render();
-        });
-      };
-      img.src = state.imageSrc;
+      loadImageDataUrl(ev.target.result);
     };
     reader.readAsDataURL(file);
   }
@@ -181,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fileUpload.addEventListener('change', (e) => processFile(e.target.files[0]));
   }
 
+  // ドラッグ＆ドロップ処理
   const dropZone = document.getElementById('drop-zone');
   if (dropZone && dragOverlay) {
     dropZone.addEventListener('dragover', (e) => {
@@ -322,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (state.mode === 'manual_add') e.target.className = 'py-3 text-xs font-bold rounded-xl transition-all bg-blue-500 text-white shadow-md';
       if (state.mode === 'manual_delete') e.target.className = 'py-3 text-xs font-bold rounded-xl transition-all bg-red-500 text-white shadow-md';
 
-      if (canvas) canvas.className = `mx-auto ${state.mode === 'auto' || state.mode === 'erase_marker' ? 'cursor-crosshair' : 'cursor-pointer'}`;
+      if (canvas) canvas.className = `mx-auto shadow-sm ${state.mode === 'auto' || state.mode === 'erase_marker' ? 'cursor-crosshair' : 'cursor-pointer'}`;
       
       if (helperText) {
         if (state.mode === 'auto') helperText.textContent = '五線の周辺（上下の点線内）をなぞってマーカーを引きます';
@@ -418,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fileUpload) fileUpload.value = '';
         if (canvasWrapper) canvasWrapper.classList.add('hidden');
         if (placeholder) placeholder.classList.remove('hidden');
-        setStatus('リセットしました。新しい楽譜画像を読み込んでください。');
+        setStatus('リセットしました。新しい楽譜画像またはPDFを読み込んでください。');
       }
     });
   }
