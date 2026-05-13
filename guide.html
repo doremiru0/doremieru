@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="自動譜読みツール「ドレミえる」の詳しい使い方ガイドです。画像の読み込みから音符の自動解析、ドレミの修正方法までをステップで解説します。">
+  <meta name="description" content="自動譜読みツール「ドレミえる」の詳しい使い方ガイドです。画像やPDFの読み込みから音符の自動解析、ドレミの修正方法までをステップで解説します。">
   <title>使い方ガイド - ドレミえる</title>
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M20FWSM4Y9"></script>
@@ -40,11 +40,25 @@
 
   <main class="flex-grow p-4 md:p-8 w-full mx-auto max-w-[1000px]">
     <div class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200">
-      <h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">使い方ガイド</h1>
+<h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">使い方ガイド</h1>
+        <p class="text-lg mb-8">「ドレミえる」は、お手持ちの楽譜を読み込んで、指定した範囲の音階（ドレミ）を自動で解析・表示できるツールです。基本的な使い方は以下のステップになります。</p>
       
+      <div class="mb-12 w-full max-w-3xl mx-auto">
+        <div class="aspect-video">
+          <iframe 
+            class="w-full h-full rounded-2xl shadow-sm border border-slate-200" 
+            src="https://www.youtube.com/embed/T7077mK3-XA?si=wH2-Bhxwkmr9BpPU" 
+            title="ドレミえる 使い方ガイド動画" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="text-center text-sm text-slate-500 mt-3">動画でも使い方をご覧いただけます</p>
+      </div>
       <div class="space-y-12 text-slate-700 leading-relaxed">
         
-        <p class="text-lg">「ドレミえる」は、お手持ちの楽譜画像を読み込んで、指定した範囲の音階（ドレミ）を自動で解析・表示できるツールです。基本的な使い方は以下のステップになります。</p>
+
 
         <section class="space-y-4">
           <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
@@ -52,7 +66,10 @@
             <h2 class="text-xl font-bold text-slate-800">楽譜を読み込む</h2>
           </div>
           <div class="pl-4 space-y-3">
-            <p>画面左側の「楽譜を読み込む」ボタンから画像ファイル（JPG, PNG, WebP形式）を選択するか、画面右側の点線エリアに直接画像をドラッグ＆ドロップしてください。</p>
+            <p>画面左側の「楽譜を読み込む」ボタンから画像ファイル（JPG, PNG, WebP形式）または<strong>PDFファイル</strong>を選択するか、画面右側の点線エリアに直接ファイルをドラッグ＆ドロップしてください。</p>
+            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
+              <li><strong>PDFを読み込んだ場合：</strong> ページの一覧画面が表示されます。解析したいページをクリックして選択してください。</li>
+            </ul>
           </div>
         </section>
 
@@ -78,7 +95,7 @@
           </div>
           <div class="pl-4 space-y-3">
             <p>操作モードで「🖍️ マーカーを引く」が選択されていることを確認し、解析したい音符がある場所（五線の周辺）をマウスでドラッグしてなぞります（黄色いマーカーが引かれます）。</p>
-            <p>マーカーを引き終えたら、左下の<strong>「音符を解析」</strong>ボタンをクリックします。黒い音符や白抜きの音符が自動で検出され、ドレミが表示されます。</p>
+            <p>マーカーを引き終えたら、左側の<strong>「音符を解析」</strong>ボタンをクリックします。黒い音符や白抜きの音符が自動で検出され、ドレミが表示されます。</p>
             <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
               <li>もしマーカーを間違えた場合は「🧽 マーカーを消す」モードで消すことができます</li>
               <li>上手く認識されない場合は、<strong>「黒さしきい値」</strong>の感度スライダーを微調整して再度解析をお試しください</li>
@@ -98,6 +115,22 @@
               <li><strong>🗑️ 印を消す:</strong> 不要な印をクリックすると削除できます</li>
             </ul>
           </div>
+        </section>
+
+        <section class="mt-8 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 space-y-4">
+          <h3 class="font-bold text-blue-800 flex items-center gap-2 text-lg">
+            <span>⚙️</span> 便利な表示調整機能
+          </h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            左側パネルのメニューから、画面を見やすくカスタマイズしたり、楽譜に合わせた設定が可能です
+          </p>
+          <ul class="list-disc pl-6 text-sm text-slate-700 space-y-2 marker:text-blue-400">
+            <li><strong>音部記号の変更:</strong> 読み込んだ楽譜に合わせて、「ト音記号」または「ヘ音記号」を選択できます</li>
+            <li><strong>ズーム倍率:</strong> 楽譜の表示サイズを拡大・縮小します</li>
+            <li><strong>画面幅に合わせる:</strong> 読み込んだ楽譜が大きすぎる場合、画面に収まるサイズに縮小します</li>
+            <li><strong>印の大きさ:</strong> 付けられたドレミの印と文字の大きさを調整できます</li>
+            <li><strong>背景の暗さ:</strong> 楽譜の背景を少し暗くすることで、付けたドレミの印を際立たせて見やすくすることができます</li>
+          </ul>
         </section>
 
         <section class="mt-8 bg-slate-100 p-6 rounded-2xl border border-slate-200">
