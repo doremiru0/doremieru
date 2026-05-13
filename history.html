@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="自動譜読みツール「ドレミえる」の詳しい使い方ガイドです。画像やPDFの読み込みから音符の自動解析、ドレミの修正方法までをステップで解説します。">
-  <title>使い方ガイド - ドレミえる</title>
-  
+  <meta name="description" content="ドレミえるの更新履歴ページです。新機能の追加や改善内容、不具合修正など、サービスの主な変更点を日付順にまとめてお知らせします。">
+  <title>更新履歴 - ドレミえる</title>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M20FWSM4Y9"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -14,6 +14,7 @@
 
   gtag('config', 'G-M20FWSM4Y9');
 </script>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,123 +34,53 @@
         <span style="color: #86cecb">ド</span><span style="color: #ebd3cf">レ</span><span style="color: #ffd98c">ミ</span><span style="color: #000000">え</span><span style="color: #000000">る</span>
       </a>
       <div class="flex flex-wrap gap-4 items-center">
-        <a href="app.html" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all active:scale-95">始める</a>
+        <a href="guide.html" class="text-slate-500 hover:text-blue-600 font-bold transition-colors">使い方ガイド</a>
       </div>
     </div>
   </header>
 
   <main class="flex-grow p-4 md:p-8 w-full mx-auto max-w-[1000px]">
     <div class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200">
-<h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">使い方ガイド</h1>
-        <p class="text-lg mb-8">「ドレミえる」は、お手持ちの楽譜を読み込んで、指定した範囲の音階（ドレミ）を自動で解析・表示できるツールです。基本的な使い方は以下のステップになります。</p>
+      <h1 class="text-3xl font-bold border-b-2 border-slate-100 pb-4 mb-8 text-slate-800">更新履歴</h1>
       
-      <div class="mb-12 w-full max-w-3xl mx-auto">
-        <div class="aspect-video">
-          <iframe 
-            class="w-full h-full rounded-2xl shadow-sm border border-slate-200" 
-            src="https://www.youtube.com/embed/T7077mK3-XA?si=wH2-Bhxwkmr9BpPU" 
-            title="ドレミえる 使い方ガイド動画" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <p class="text-center text-sm text-slate-500 mt-3">動画でも使い方をご覧いただけます</p>
-      </div>
-      <div class="space-y-12 text-slate-700 leading-relaxed">
-        
+      <div class="space-y-8">
 
-
-        <section class="space-y-4">
-          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
-            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 1</span>
-            <h2 class="text-xl font-bold text-slate-800">楽譜を読み込む</h2>
+        <article class="relative pl-6 border-l-2 border-transparent pb-2">
+          <div class="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+          <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
+            <time class="text-sm font-bold text-slate-500 tracking-wider">2026.05.13</time>
+            <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-md border border-slate-200 w-max">v1.2.0</span>
           </div>
-          <div class="pl-4 space-y-3">
-            <p>画面左側の「楽譜を読み込む」ボタンから画像ファイル（JPG, PNG, WebP形式）または<strong>PDFファイル</strong>を選択するか、画面右側の点線エリアに直接ファイルをドラッグ＆ドロップしてください。</p>
-            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
-              <li><strong>PDFを読み込んだ場合：</strong> ページの一覧画面が表示されます。解析したいページをクリックして選択してください。</li>
-            </ul>
-          </div>
-        </section>
-
-        <section class="space-y-4">
-          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
-            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 2</span>
-            <h2 class="text-xl font-bold text-slate-800">五線の位置と間隔を合わせる</h2>
-          </div>
-          <div class="pl-4 space-y-3">
-            <p>画像が読み込まれると、青い「5本線」と赤い「上下の限界線（点線）」が表示されます。</p>
-            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
-              <li><strong>位置 (Y):</strong> スライダーを動かして、青い線の「一番上」を、楽譜の五線の一番上の線に合わせてください</li>
-              <li><strong>間隔 (S):</strong> スライダーを動かして、青い線の幅が楽譜の五線の幅とぴったり重なるように調整してください</li>
-            </ul>
-            <p class="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">※この「五線合わせ」が正確でないと、ドレミの判定がズレてしまうため慎重に合わせましょう</p>
-          </div>
-        </section>
-
-        <section class="space-y-4">
-          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
-            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 3</span>
-            <h2 class="text-xl font-bold text-slate-800">マーカーを引いて音符を解析する</h2>
-          </div>
-          <div class="pl-4 space-y-3">
-            <p>操作モードで「🖍️ マーカーを引く」が選択されていることを確認し、解析したい音符がある場所（五線の周辺）をマウスでドラッグしてなぞります（黄色いマーカーが引かれます）。</p>
-            <p>マーカーを引き終えたら、左側の<strong>「音符を解析」</strong>ボタンをクリックします。黒い音符や白抜きの音符が自動で検出され、ドレミが表示されます。</p>
-            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
-              <li>もしマーカーを間違えた場合は「🧽 マーカーを消す」モードで消すことができます</li>
-              <li>上手く認識されない場合は、<strong>「黒さしきい値」</strong>の感度スライダーを微調整して再度解析をお試しください</li>
-            </ul>
-          </div>
-        </section>
-
-        <section class="space-y-4">
-          <div class="flex items-center gap-3 border-l-4 border-[#86cecb] pl-3">
-            <span class="bg-[#86cecb] text-white font-bold px-3 py-1 rounded-lg text-sm">STEP 4</span>
-            <h2 class="text-xl font-bold text-slate-800">手動で修正する</h2>
-          </div>
-          <div class="pl-4 space-y-3">
-            <p>自動解析で漏れてしまった音符や、間違って認識された音符は手動で修正できます。</p>
-            <ul class="list-disc pl-6 space-y-2 marker:text-[#86cecb]">
-              <li><strong>➕ 印をつける:</strong> 印をつけたいところでクリックするとその場所に印を追加します</li>
-              <li><strong>🗑️ 印を消す:</strong> 不要な印をクリックすると削除できます</li>
-            </ul>
-          </div>
-        </section>
-
-        <section class="mt-8 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 space-y-4">
-          <h3 class="font-bold text-blue-800 flex items-center gap-2 text-lg">
-            <span>⚙️</span> 便利な表示調整機能
-          </h3>
-          <p class="text-sm text-slate-600 leading-relaxed">
-            左側パネルのメニューから、画面を見やすくカスタマイズしたり、楽譜に合わせた設定が可能です
+          <h2 class="text-lg font-bold text-slate-800 mb-2">「印の大きさ」を変更できるようになりました</h2>
+          <p class="text-slate-600 leading-relaxed">
+           印と文字の大きさを変更できるようにしました。操作パネルから変更できます。
           </p>
-          <ul class="list-disc pl-6 text-sm text-slate-700 space-y-2 marker:text-blue-400">
-            <li><strong>音部記号の変更:</strong> 読み込んだ楽譜に合わせて、「ト音記号」または「ヘ音記号」を選択できます</li>
-            <li><strong>ズーム倍率:</strong> 楽譜の表示サイズを拡大・縮小します</li>
-            <li><strong>画面幅に合わせる:</strong> 読み込んだ楽譜が大きすぎる場合、画面に収まるサイズに縮小します</li>
-            <li><strong>印の大きさ:</strong> 付けられたドレミの印と文字の大きさを調整できます</li>
-            <li><strong>背景の暗さ:</strong> 楽譜の背景を少し暗くすることで、付けたドレミの印を際立たせて見やすくすることができます</li>
-          </ul>
-        </section>
+        </article>
 
-        <section class="mt-8 bg-slate-100 p-6 rounded-2xl border border-slate-200">
-          <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
-            <span>💡</span> 最初からやり直したいときは
-          </h3>
-          <p class="text-sm text-slate-600 leading-relaxed pl-7">
-            左側パネルの一番下にある<strong class="text-red-500">「全てのデータをリセット」</strong>ボタンを押すと、読み込んだ画像や設定した五線、書き込んだマーカー・音符などのデータがすべて消去され、初期状態に戻ります。別の楽譜を新しく読み込みたいときなどにご活用ください。
+        <article class="relative pl-6 border-l-2 border-transparent pb-2">
+          <div class="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+          <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
+            <time class="text-sm font-bold text-slate-500 tracking-wider">2026.04.23</time>
+            <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-md border border-slate-200 w-max">v1.1.0</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-800 mb-2">PDFに対応しました</h2>
+          <p class="text-slate-600 leading-relaxed">
+            PDFに対応しました。ページを選んでご利用いただけます。
           </p>
-        </section>
+        </article>
 
+        <article class="relative pl-6 border-l-2 border-transparent pb-2">
+          <div class="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+          <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
+            <time class="text-sm font-bold text-slate-500 tracking-wider">2026.03.30</time>
+            <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-md border border-slate-200 w-max">v1.0.0</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-800 mb-2">「ドレミえる」を公開しました</h2>
+          <p class="text-slate-600 leading-relaxed">
+            自動譜読みツール「ドレミえる」を公開しました。
+          </p>
+        </article>
       </div>
-      
-      <div class="mt-16 text-center border-t border-slate-100 pt-8">
-        <a href="app.html" class="inline-block px-10 py-4 text-xl font-bold text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 active:scale-95 tracking-widest">
-          ドレミえるを使ってみる
-        </a>
-      </div>
-
     </div>
   </main>
 
