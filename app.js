@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mode: 'auto',
     clef: 'treble',
     staffTop: 200, spacing: 15, threshold: 39, scale: 1, imageDim: 50,
+    noteScale: 1.0, // 新しく追加
     isPainting: false, hoverPos: null, previewPos: null
   };
 
@@ -148,20 +149,30 @@ document.addEventListener('DOMContentLoaded', () => {
       if (state.mode === 'manual_delete' && state.hoverPos && Math.sqrt((n.x - state.hoverPos.x)**2 + (n.y - state.hoverPos.y)**2) < 15) {
         drawColor = 'rgba(249, 115, 22, 1)'; 
       }
-      ctx.fillStyle = drawColor; ctx.beginPath(); ctx.arc(n.x, n.y, 8.9, 0, Math.PI * 2); ctx.fill();
+      
+      const currentRadius = 8.9 * state.noteScale;
+      const currentFontSize = 20 * state.noteScale;
+      const currentOffsetX = 17 * state.noteScale;
+
+      ctx.fillStyle = drawColor; ctx.beginPath(); ctx.arc(n.x, n.y, currentRadius, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = 'black'; ctx.lineWidth = 2; ctx.stroke();
       if (n.pitch) {
-        ctx.font = 'bold 20px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'white';
-        ctx.fillText(n.pitch, n.x + 17, n.y);
+        ctx.font = `bold ${currentFontSize}px sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'white';
+        ctx.fillText(n.pitch, n.x + currentOffsetX, n.y);
       }
     });
 
     if (state.mode === 'manual_add' && state.previewPos) {
       const { pitchName } = getPitchInfo(state.previewPos.y, state.clef);
-      ctx.globalAlpha = 0.8; ctx.fillStyle = 'rgba(250, 204, 21, 0.9)'; ctx.beginPath(); ctx.arc(state.previewPos.x, state.previewPos.y, 8.9, 0, Math.PI * 2); ctx.fill();
+      
+      const currentRadius = 8.9 * state.noteScale;
+      const currentFontSize = 20 * state.noteScale;
+      const currentOffsetX = 17 * state.noteScale;
+
+      ctx.globalAlpha = 0.8; ctx.fillStyle = 'rgba(250, 204, 21, 0.9)'; ctx.beginPath(); ctx.arc(state.previewPos.x, state.previewPos.y, currentRadius, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.font = 'bold 20px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'rgba(250, 204, 21, 0.9)';
-      ctx.fillText(pitchName, state.previewPos.x + 17, state.previewPos.y); ctx.globalAlpha = 1.0;
+      ctx.font = `bold ${currentFontSize}px sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'rgba(250, 204, 21, 0.9)';
+      ctx.fillText(pitchName, state.previewPos.x + currentOffsetX, state.previewPos.y); ctx.globalAlpha = 1.0;
     }
   }
 
@@ -486,13 +497,14 @@ document.addEventListener('DOMContentLoaded', () => {
   bindSlider('scale', 'scale', '%');
   bindSlider('imageDim', 'imageDim', '%');
   bindSlider('threshold', 'threshold');
+  bindSlider('noteScale', 'noteScale', '倍');
 
-  // ±ボタンのイベントバインド関数
-  const bindSliderButtons = (stateKey, min, max, step) => {
+  // ±ボタンのイベントバインド関数（suffix対応）
+  const bindSliderButtons = (stateKey, min, max, step, customSuffix = '') => {
     const buttons = document.querySelectorAll(`button[data-target="${stateKey}"]`);
     const slider = document.getElementById(`slider-${stateKey}`);
     const valText = document.getElementById(`val-${stateKey}`);
-    const suffix = stateKey === 'scale' || stateKey === 'imageDim' ? '%' : '';
+    const suffix = customSuffix || (stateKey === 'scale' || stateKey === 'imageDim' ? '%' : '');
 
     buttons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -517,6 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindSliderButtons('scale', 0.1, 3.0, 0.05);
   bindSliderButtons('imageDim', 0, 90, 5);
   bindSliderButtons('threshold', 0, 220, 1);
+  bindSliderButtons('noteScale', 0.5, 3.0, 0.1, '倍');
 
   if (btnFit) btnFit.addEventListener('click', fitToContainer);
   if (btnAnalyze) btnAnalyze.addEventListener('click', analyze);
@@ -526,12 +539,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm('現在の編集データを全て消去し、完全に初期状態に戻しますか？')) {
         state.imageSrc = null; state.notes = []; state.strokes = []; state.currentPath = [];
         state.scale = 1; state.staffTop = 200; state.spacing = 15; state.threshold = 39; state.imageDim = 50;
+        state.noteScale = 1.0; // リセット時にも初期値に戻す
         
         document.getElementById('slider-scale').value = 1; document.getElementById('val-scale').textContent = '100%';
         document.getElementById('slider-staffTop').value = 200; document.getElementById('val-staffTop').textContent = '200';
         document.getElementById('slider-spacing').value = 15; document.getElementById('val-spacing').textContent = '15';
         document.getElementById('slider-threshold').value = 39; document.getElementById('val-threshold').textContent = '39';
         document.getElementById('slider-imageDim').value = 50; document.getElementById('val-imageDim').textContent = '50%';
+        document.getElementById('slider-noteScale').value = 1.0; document.getElementById('val-noteScale').textContent = '1倍';
         
         if (fileUpload) fileUpload.value = '';
         if (canvasWrapper) canvasWrapper.classList.add('hidden');
